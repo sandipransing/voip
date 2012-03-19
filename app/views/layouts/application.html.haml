@@ -1,0 +1,20 @@
+- content_for :title do
+  RubyConf :: Voip Demo
+
+- content_for :flash do
+  = render 'shared/flash_messages'
+
+- content_for :layout_content do
+  %body
+    #h
+      #v
+        = yield(:layout_header)
+        #content
+          = yield(:flash)
+          = yield(:spinner)
+          #primary
+            = content_for?(:content) ? yield(:content) : yield
+          #local-nav
+          = yield(:footer)
+
+= render :file => 'layouts/base'

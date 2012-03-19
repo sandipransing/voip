@@ -1,0 +1,8 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:content => "text/html;charset=UTF-8", "http-equiv" => "content-type"}/
+    %link{:href => "/favicon.ico", :rel => "icon", :type => "image/x-icon"}/
+    = yield :layout_head
+    %title= yield(:title)
+  = yield(:layout_content) or yield
