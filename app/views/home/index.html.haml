@@ -1,4 +1,33 @@
-%h2 VOIP DEMO
-%p Hi there !
-- form_tag root_url do 
-  = text_field_tag :number
+.wrapper
+  - form_for @call, :url => dial_url, :class => 'form-horizontal' do |f|
+    .fieldset.well
+      .row
+        .span2
+          = image_tag 'rails.jpg' 
+        .span2
+          = image_tag 'adhearsion_logo.jpg' 
+        .span2
+          = image_tag 'asterisk.png' 
+      .row
+        %br
+        %h1 Enter your name and phone number
+        %br
+      .row.control-group
+        .controls
+          .input-append
+            = f.text_field :name, :placeholder => 'Enter name'
+            = f.text_field :destination, :placeholder => 'Enter number'
+            %button.btn.btn-primary Call
+          .error
+            - @call.errors.full_messages.each do |e|
+              = e
+          %br
+          %br
+          - unless @call.new_record?
+            = periodically_call_remote(:url => poll_url(@call), :frequency => 5.seconds)
+          #result.result
+            - unless @call.new_record?
+              .alert.alert-info
+                = "Dialing #{@call.name} #{@call.destination}"
+          #player
+            = @call.player

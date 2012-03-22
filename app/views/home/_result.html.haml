@@ -1,0 +1,4 @@
+.alert.alert-info
+  = @call.status
+  - if @call.path.present?
+    = link_to 'download', @call.path

@@ -4,7 +4,7 @@ gem "builder", "~> 2.1.2"
 
 gem 'rails', '2.3.11'
 gem 'rake', '0.9.2'
-#gem 'mysql'
+gem 'mysql'
 gem 'erubis'
 gem 'i18n', '0.5.0'
 gem 'haml', '3.1.2'

@@ -1,0 +1,15 @@
+- content_for :title do
+  VoIP Recordings
+ 
+%table
+  %thead
+    %tr 
+      %th Name
+      %th Destination
+      %th Extension
+  %tbody
+    - @calls.each do |call|
+      %tr
+        %td= call.name
+        %td= call.destination
+  = will_paginate @calls

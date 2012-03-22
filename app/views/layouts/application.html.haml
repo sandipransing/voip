@@ -1,20 +1,25 @@
-- content_for :title do
-  RubyConf :: Voip Demo
+- unless content_for? :title
+  - content_for :title do
+    VoIP DEMO
 
-- content_for :flash do
-  = render 'shared/flash_messages'
+- content_for :alerts do
+  - if flash.present?
+    .alert.alert-info
+      %a.close{:href => "#"} ×
+      %strong= flash[flash.keys.first]
+
 
 - content_for :layout_content do
   %body
-    #h
-      #v
-        = yield(:layout_header)
-        #content
-          = yield(:flash)
-          = yield(:spinner)
-          #primary
-            = content_for?(:content) ? yield(:content) : yield
-          #local-nav
-          = yield(:footer)
+    .container
+      .header
+        %h1= yield(:title)
+    .container
+      = render 'layouts/carousel'
+      = yield(:alerts)
+      = content_for?(:content) ? yield(:content) : yield
+
+    %footer
+      = yield(:footer)
 
 = render :file => 'layouts/base'
