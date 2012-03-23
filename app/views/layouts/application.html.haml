@@ -15,7 +15,6 @@
       .header
         %h1= yield(:title)
     .container
-      = render 'layouts/carousel'
       = yield(:alerts)
       = content_for?(:content) ? yield(:content) : yield
 

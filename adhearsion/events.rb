@@ -2,57 +2,53 @@
 # In this file you can define callbacks for different aspects of the framework. Below is an example:
 ##
 #
-events.asterisk.before_call.each do |call|
+# events.asterisk.before_call.each do |call|
   # This simply logs the extension for all calls going through this Adhearsion app.
-  #extension = call.variables[:extension]
-  #ahn_log "Got a new call with extension #{extension}"
-end
+  # extension = call.variables[:extension]
+  # ahn_log "Got a new call with extension #{extension}"
+# end
 
 ##
 # Asterisk Manager Interface example:
 #
 events.asterisk.manager_interface.each do |event|
-  puts "***#{event.inspect}"
   #  ahn_log.events event.name
-  channel = event.headers["Channel"]
-  channel.match(/DAHDI\/i\d\/(\d+)-.+/)
-  destination = $1
-  puts destination
-  uniqueid = event.headers['Uniqueid']
-  call = Call.find_by_uniqueid(uniqueid)
-  call ||= Call.find_by_destination_and_status(destination, nil)
-  call.uniqueid = uniqueid
-  status = event.headers["ChannelStateDesc"]
+  #status = event.headers["ChannelStateDesc"]
   #puts "#{event.name} #{destination} #{uniqueid} - #{status}**"
 
+  puts event.name
   case event.name
+  when 'VarSet'
+    case event['Variable']
+    when 'call_launcher'
+      Call.find_and_assign_uniqid(event)
+    end
   when 'Newexten'
-    #puts event.inspect
   when 'Newchannel'
-    status = "Dialing #{destination}"
-  when "Newstate"
-    status = "#{event.headers["ChannelStateDesc"]} #{destination}"
+  when 'Newstate'
+    case event.headers['ChannelStateDesc']
+    when 'Dialing'
+     # Call.update_new_state(event)
+    when 'Ringing'
+      Call.update_new_state(event)
+    when 'Up'
+       Call.update_new_state(event, 'answered')
+    end
+  when "Monitor"
   when 'Dial'
     status = 'Dialing Me 9762446921'
   when "Bridge"
-    status = "Call connected"
+    Call.update_bridge_state(event, 'Bridge')
   when "Unlink"
     status = "Call disconnected"
   when "MonitorStart"
     status = "Call recording has been started"
   when "Hangup"
-    status = "Call Hangup"
+    puts event.inspect
+    Call.update_new_state(event, 'Hangup')
   when "MonitorStop"
-    status = "Call recording has stopped"
-  end if call
-
-  if call
-    call.status = status if status.present?
-    if call.changes['status'] || call.changes['uniqueid']
-      #puts call.status
-      call.save(false)
-    end
   end
+
 end
 # This assumes you gave :events => true to the config.asterisk.enable_ami method in config/startup.rb
 #
